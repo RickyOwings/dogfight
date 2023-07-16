@@ -1,0 +1,82 @@
+import * as PREND from './pixelRendering';
+
+
+const pageLoaded = () => new Promise((resolve)=>{
+    window.addEventListener("load", ()=>{
+        resolve(1);
+    })
+})
+
+
+interface GameParams {
+    width?: number;
+    height?: number;
+}
+
+// GAME CLASS
+export default class {
+    private canvas: HTMLCanvasElement | undefined = undefined;
+    private ctx: CanvasRenderingContext2D | null = null;
+
+    constructor(params: GameParams){
+        this.init(params);
+    }
+
+
+    async init({ width = 256, height = 256 }: GameParams = {}){
+        await pageLoaded();
+
+        // getting reference to the canvas element
+        this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        // defining drawing context
+        this.ctx = this.canvas.getContext("2d")
+        
+        // starting the game loop
+        var lastRender = 0;
+
+        const loop = (timestamp: number)=>{
+            const progress = timestamp - lastRender;
+            lastRender = timestamp;
+            this.update(progress);
+            this.draw();
+            window.requestAnimationFrame(loop);
+        }
+
+        window.requestAnimationFrame(loop);
+    }
+
+
+    update(progress: number){
+        for(let i = 0; i < GameObject.instances.length; i++){
+            GameObject.instances[i].update(progress);
+        }
+    }    
+
+
+    draw(){
+        if (!this.ctx) return;
+        for(let i = 0; i < GameObject.instances.length; i++){
+            GameObject.instances[i].draw(this.ctx);
+        }
+        PREND.pLine(this.ctx, 0, 0, -32, 1, "#ffffff");
+    }
+}
+
+
+class GameObject {
+    static instances: GameObject[] = [];
+    constructor(){
+        GameObject.instances.push(this); 
+    }
+    update(progress: number){
+
+    }
+    draw(ctx: CanvasRenderingContext2D){
+        
+    }
+}
+
+

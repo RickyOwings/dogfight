@@ -1,0 +1,138 @@
+import GameObject from './GameObject';
+import Input from './input';
+import { pLineV, pPoly } from './pixelRendering';
+import { type Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist } from './Vec2';
+
+
+class Player extends GameObject {
+
+    static input: Input = new Input(['w', 'a', 's', 'd']);
+
+    static shape: Vec2[] = [
+        {x:  0, y: 5},
+        {x: -3, y: -5},
+        {x:  3, y: -5},
+    ]
+
+    static color: string = "#00ff00";
+
+    private position: Vec2;
+    private velocity: Vec2 = {x: 0, y: 0};
+    private acceleration: Vec2 = {x: 0, y: 0};
+
+    private rotation: number = 0;
+    private rotVelocity: number = 0; 
+    private rotAcceleration: number = 0;
+
+    constructor(x: number, y: number){
+        super();
+
+        this.position = {
+            x: x,
+            y: y
+        }
+    }
+
+
+    update(progress: number){
+        this.thrust();
+        this.drag();
+        this.turn();
+        this.rotDrag();
+        this.lift();
+        this.phys(progress);
+
+
+        //GameObject.setCameraPosition(this.position.x, this.position.y)
+    }
+
+
+    thrust(){
+        const w = (Player.input.isPressed('w')) ? 1 : 0;
+        const s = (Player.input.isPressed('s')) ? 1 : 0;
+        const factor = 50 * (w - s) + 100;
+
+        const force: Vec2 = {x: 0, y: factor};
+        const forceRot = rotateVec2(force, this.rotation);
+        this.acceleration = addVec2(
+            this.acceleration,
+            forceRot
+        );
+    }
+
+
+    drag(){
+        const drag = scaleVec2(this.velocity, -0.2);
+        this.acceleration = addVec2(
+            this.acceleration,
+            drag
+        );
+    }
+
+
+    turn(){
+        const a = (Player.input.isPressed('a')) ? 1 : 0;
+        const d = (Player.input.isPressed('d')) ? 1 : 0;
+
+        const optimalTurnSpeed = 250;
+        const falloff = 1 / 1000
+        const vel = vecToDist(this.velocity);
+        const speedMult = 1 / (falloff * (vel - optimalTurnSpeed) ** 2 + 1)
+
+        const turnFactor = (d - a) * 20;
+        this.rotAcceleration += turnFactor * speedMult;
+    }
+
+
+    rotDrag(){
+        this.rotAcceleration -= this.rotVelocity * 5;
+    }
+
+
+    lift(){
+        const liftForce: number = rotateVec2(this.velocity, -this.rotation).x
+
+        const liftVector: Vec2 = {x: -liftForce, y: 0};
+        const liftRotated: Vec2 = rotateVec2(liftVector, this.rotation);
+        this.acceleration = addVec2(
+            this.acceleration,
+            liftRotated
+        );
+    }
+
+
+    phys(progress: number){
+        const timeMS = progress / 1000;
+
+        // rotational physics
+        this.rotVelocity += this.rotAcceleration * timeMS;
+        this.rotation += this.rotVelocity * timeMS;
+
+        // adjusting the velocity by the acceleration
+        this.velocity = addVec2(
+            this.velocity, 
+            scaleVec2(this.acceleration, timeMS)
+        );
+
+        // adjusting the position by the velocity
+        this.position = addVec2(
+            this.position, 
+            scaleVec2(this.velocity, timeMS)
+        );
+        
+
+        // accelerations to zero
+        this.rotAcceleration = 0;
+        this.acceleration = {x: 0, y: 0};
+    }
+
+
+    draw(ctx: CanvasRenderingContext2D){
+        const rotated = polyRotate(Player.shape, this.rotation);
+        const translated = polyOffset(rotated, this.position);
+        const toCanvas = GameObject.gTCanPosPoly(translated);
+        pPoly(ctx, toCanvas, Player.color);
+    }
+}
+
+export default Player;
