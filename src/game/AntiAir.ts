@@ -45,6 +45,11 @@ class AntiAir extends GameObject {
     }
 
 
+    shoot(progress: number): void {
+
+    }
+
+
     draw(ctx: OffscreenCanvasRenderingContext2D): void {
         const localShape = polyOffset(AntiAir.shape, this.position);
         const canvasShape = GameObject.gTCanPosPoly(localShape);
