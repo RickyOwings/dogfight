@@ -1,4 +1,4 @@
-import { type Vec2 } from "./Vec2";
+import { Vec2 } from "./Vec2";
 import resolution from "./resolution";
 
 export function pDot(

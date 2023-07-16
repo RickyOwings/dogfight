@@ -2,7 +2,7 @@ import Bullet from './Bullet';
 import GameObject from './GameObject';
 import Input from './input';
 import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from './pixelRendering';
-import { type Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
+import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
 import GameAudio from './GameAudio';
 
 
@@ -11,10 +11,10 @@ class Player extends GameObject {
 
     static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k']);
 
-    static shootSound: GameAudio = new GameAudio('./src/game/assets/sounds/shoot.ogg');
-    static moveSound: GameAudio = new GameAudio('./src/game/assets/sounds/move.ogg');
-    static airbrakeSound: GameAudio = new GameAudio('./src/game/assets/sounds/airbrake.ogg');
-    static windSound: GameAudio = new GameAudio('./src/game/assets/sounds/wind.ogg');
+    static shootSound: GameAudio = new GameAudio('./assets/sounds/shoot.ogg');
+    static moveSound: GameAudio = new GameAudio('./assets/sounds/move.ogg');
+    static airbrakeSound: GameAudio = new GameAudio('./assets/sounds/airbrake.ogg');
+    static windSound: GameAudio = new GameAudio('./assets/sounds/wind.ogg');
 
     static shape: Vec2[] = [
         { x: 0, y: 5 },

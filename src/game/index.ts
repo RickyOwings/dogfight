@@ -3,6 +3,7 @@ import GameObject from './GameObject'
 import resolution from './resolution';
 import generate from './generate';
 import awaitUserInput from './awaitUserInput';
+import titleScreen from './titleScreen';
 
 
 interface GameParams {
@@ -24,7 +25,6 @@ export default class {
         console.log("initializing...")
         await asyncPageLoad();
         console.log("page loaded")
-        await awaitUserInput();
         console.log("user input")
         // getting reference to the canvas element
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -42,9 +42,10 @@ export default class {
         window.addEventListener('resize', fixResolution);
 
         this.oCanvas = this.canvas.transferControlToOffscreen();
-
-        // defining drawing context
         this.ctx = this.oCanvas.getContext("2d")
+        if (this.ctx) setTimeout(()=>{titleScreen(this.ctx)}, 51);
+        await awaitUserInput();
+        // defining drawing context
 
         // initializing game objects at the start
         console.log("generating game objects")
@@ -61,7 +62,7 @@ export default class {
             this.draw();
             setTimeout(loop, 1);
         }
-        console.log("starting game loo")
+        console.log("starting game loop")
         loop();
     }
 

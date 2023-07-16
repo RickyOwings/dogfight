@@ -1,5 +1,5 @@
 import GameObject from "./GameObject";
-import { addVec2, polyOffset, type Vec2 } from "./Vec2";
+import { addVec2, polyOffset, Vec2 } from "./Vec2";
 import { pPoly, pPolyFill, pPolyFillStip } from "./pixelRendering";
 
 export class BackgroundElement extends GameObject {

@@ -2,14 +2,14 @@ import AntiAir from "./AntiAir";
 import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
-import { scaleVec2, addVec2, rotateVec2, type Vec2, subVec2, polyOffset } from "./Vec2";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
 import { insidePoly, pDot, pLineV } from "./pixelRendering";
 
 class Bullet extends GameObject {
     private static lauchVel: number = 600;
     private static color: string = "#ffffff";
     private static dispersion: number = 0.02;
-    private static hit: GameAudio = new GameAudio('./src/game/assets/sounds/hit.ogg')
+    private static hit: GameAudio = new GameAudio('./assets/sounds/hit.ogg')
 
     private position: Vec2;
     private velocity: Vec2;

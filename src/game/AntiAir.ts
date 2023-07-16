@@ -1,7 +1,7 @@
 import Explosion from "./Explosion";
 import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
-import { addVec2, polyOffset, type Vec2 } from "./Vec2";
+import { addVec2, polyOffset, Vec2 } from "./Vec2";
 import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
 
 class AntiAir extends GameObject {
@@ -14,7 +14,7 @@ class AntiAir extends GameObject {
         {x:  5, y:  5},
         {x: -5, y:  5}
     ]
-    private static explosion: GameAudio = new GameAudio('./src/game/assets/sounds/explosion.ogg')
+    private static explosion: GameAudio = new GameAudio('./assets/sounds/explosion.ogg')
 
     public position: Vec2;
     private health: number = 100;
@@ -34,14 +34,16 @@ class AntiAir extends GameObject {
         this.identifier = "AntiAir"
     }
 
-    update(progress: number): void {
 
+    update(progress: number): void {
+        this.shoot(progress);
         if (this.health <= 0) {
             this.isGarbage = true
             AntiAir.explosion.play();
             new Explosion(this.position)
         };
     }
+
 
     draw(ctx: OffscreenCanvasRenderingContext2D): void {
         const localShape = polyOffset(AntiAir.shape, this.position);

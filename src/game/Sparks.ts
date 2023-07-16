@@ -1,5 +1,5 @@
 import GameObject from "./GameObject";
-import { scaleVec2, addVec2, rotateVec2, type Vec2, subVec2, polyOffset } from "./Vec2";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
 import { insidePoly, pDot, pLineV } from "./pixelRendering";
 
 class Spark extends GameObject {
@@ -30,7 +30,6 @@ class Spark extends GameObject {
             this.position
         ]);
         pLineV(ctx, line[0], line[1], `rgba(255, ${this.lifeTime * 205 / this.life + 50}, ${this.lifeTime * 400 / this.life - 200 } , ${this.lifeTime / this.life})`);
-        console.log(this.lifeTime * 255 / this.life)
     }
 
     private life: number = 500 + Math.random() * 300;

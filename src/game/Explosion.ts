@@ -1,6 +1,6 @@
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
-import { addVec2, polyOffset, polyScale, type Vec2 } from "./Vec2";
+import { addVec2, polyOffset, polyScale, Vec2 } from "./Vec2";
 import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
 
 class Explosion extends GameObject {
