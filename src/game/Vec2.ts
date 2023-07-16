@@ -47,6 +47,11 @@ export function distBetVecs(v1: Vec2, v2: Vec2): number{
 }
 
 
+export function angleBetVecs(v1: Vec2, v2: Vec2): number{
+    return Math.atan2(v2.y - v1.y, v2.x - v1.x);
+}
+
+
 export function polyOffset(points: Vec2[], offset: Vec2){
     let newArr: Vec2[] = [];
     points.forEach((point)=>{

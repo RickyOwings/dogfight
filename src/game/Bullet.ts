@@ -6,7 +6,7 @@ import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec
 import { insidePoly, pDot, pLineV } from "./pixelRendering";
 
 class Bullet extends GameObject {
-    private static lauchVel: number = 600;
+    public static lauchVel: number = 600;
     private static color: string = "#ffffff";
     private static dispersion: number = 0.02;
     private static hit: GameAudio = new GameAudio('./assets/sounds/hit.ogg')
@@ -64,7 +64,9 @@ class Bullet extends GameObject {
 
 
     checkCollision() {
-        const enemies = GameObject.searchByIdentifier('AntiAir') as AntiAir[];
+        const searchType = (this.owner == "Player") ? 'AntiAir' : 'Player';
+
+        const enemies = GameObject.searchByIdentifier(searchType) as AntiAir[];
         enemies.forEach((enemy) => {
             const enemyPoly = polyOffset(AntiAir.shape, enemy.position);
             if (insidePoly(this.position, enemyPoly)) {

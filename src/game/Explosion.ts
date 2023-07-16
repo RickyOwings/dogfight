@@ -1,3 +1,4 @@
+import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
 import { addVec2, polyOffset, polyScale, Vec2 } from "./Vec2";
@@ -5,6 +6,7 @@ import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
 
 class Explosion extends GameObject {
     
+    static sound: GameAudio = new GameAudio('./assets/sounds/explosion.ogg')
     static color: string = "#ffaa00";
     static shape: Vec2[] = [
         {x: -5, y: 10},
@@ -22,6 +24,7 @@ class Explosion extends GameObject {
     private position: Vec2;
 
     constructor(pos: Vec2){
+        Explosion.sound.play();
         super();
         this.setZIndex(100);
         for (let i = 0; i < 50; i++){

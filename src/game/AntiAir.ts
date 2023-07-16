@@ -1,7 +1,9 @@
+import Bullet from "./Bullet";
 import Explosion from "./Explosion";
 import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
-import { addVec2, polyOffset, Vec2 } from "./Vec2";
+import Player from "./Player";
+import { addVec2, angleBetVecs, distBetVecs, polyOffset, scaleVec2, Vec2 } from "./Vec2";
 import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
 
 class AntiAir extends GameObject {
@@ -14,10 +16,9 @@ class AntiAir extends GameObject {
         {x:  5, y:  5},
         {x: -5, y:  5}
     ]
-    private static explosion: GameAudio = new GameAudio('./assets/sounds/explosion.ogg')
 
     public position: Vec2;
-    private health: number = 100;
+    private health: number = 20;
 
     private damaged: boolean = false;
     public damage(amount: number){
@@ -39,14 +40,67 @@ class AntiAir extends GameObject {
         this.shoot(progress);
         if (this.health <= 0) {
             this.isGarbage = true
-            AntiAir.explosion.play();
+            setTimeout(()=>{
+                new AntiAir(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
+                new AntiAir(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
+            }, 4000)
             new Explosion(this.position)
         };
     }
 
+    private static ROF = 30;
+    private static burstTime = 1000;
+    private static burstRest = 3000; 
+    private static range = 500;
+    private burstTimer = AntiAir.burstTime;
+    private resting = false;
+    private fireTime = AntiAir.ROF;
 
     shoot(progress: number): void {
+        this.burstTimer -= progress;
+        if (this.resting){
+            if (this.burstTimer < 0) {
+                this.resting = false
+                this.burstTimer = AntiAir.burstTime;
+            };
+            return;
+        }
+        if (this.burstTimer < 0) {
+            this.resting = true;
+            this.burstTimer = AntiAir.burstRest;
+            this.fireTime = AntiAir.ROF;
+            return;
+        }
+        this.fireTime -= progress;
+        if (this.fireTime > 0) return;
+        this.fireTime = AntiAir.ROF;
+        const players = GameObject.searchByIdentifier("Player") as Player[];
+        players.forEach((player)=>{
+            const distance = distBetVecs(player.position, this.position);
+            if (distance > AntiAir.range) return; 
+            const lead = this.obtainLead(player, progress, distance)
+            this.fireBullet(lead);
+        });
+    }
 
+
+    obtainLead(player: Player, progress: number, distance: number): number {
+        const timeS = progress / 1000;
+        const leadPos = addVec2(
+            player.position,
+            scaleVec2(player.velocity, distance * 8 /(progress * Bullet.lauchVel))
+        );
+        return angleBetVecs(this.position, leadPos);
+    } 
+
+
+    fireBullet(angle: number){
+        new Bullet(
+            this.position, 
+            {x: 0, y: 0},
+            angle - Math.PI / 2,
+            "AntiAir"
+        )
     }
 
 

@@ -33,12 +33,21 @@ class GameAudio {
         this.audio = audio;
         this.audio.preservesPitch = false;
     }
+
+
     play(){
         this.audio.pause();
         this.audio.currentTime = 0;
         this.audio.volume = GameAudio.volume;
         this.audio.play();
     }
+
+
+    stop(){
+        this.audio.pause();
+    }
+
+
     loop(){
         this.audio.loop = true;
         this.audio.play();

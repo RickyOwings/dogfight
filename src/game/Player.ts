@@ -4,6 +4,7 @@ import Input from './input';
 import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from './pixelRendering';
 import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
 import GameAudio from './GameAudio';
+import Explosion from './Explosion';
 
 
 
@@ -24,8 +25,8 @@ class Player extends GameObject {
 
     static color: string = "#00ff00";
 
-    private position: Vec2;
-    private velocity: Vec2 = { x: 0, y: 0 };
+    public position: Vec2;
+    public velocity: Vec2 = { x: 0, y: 0 };
     private acceleration: Vec2 = { x: 0, y: 0 };
 
     private accelerationStore: Vec2 = { x: 0, y: 0 };
@@ -50,7 +51,7 @@ class Player extends GameObject {
         Player.windSound.loop();
     }
 
-    private static zoomState = 1;
+    private static zoomState = 0.25;
     private progressStore: number = 11;
     update(progress: number) {
         this.setPlaybackRate();
@@ -85,6 +86,26 @@ class Player extends GameObject {
         );
 
         GameObject.setCameraPosition(cameraPos.x, cameraPos.y)
+    }
+
+
+    private health: number = 100;
+
+
+    damage(amount: number){
+        this.health-=amount;
+        if (this.health < 0) this.die();
+    }
+
+
+    die(){
+        if (this.isGarbage) return;
+        Player.moveSound.stop();        
+        Player.airbrakeSound.stop();
+        Player.windSound.stop();
+        setTimeout(()=>{new Player(Math.random() * 6000 - 3000,Math.random() * 6000 - 3000)}, 5000)
+        new Explosion(this.position)
+        this.isGarbage = true;
     }
 
 
@@ -187,7 +208,7 @@ class Player extends GameObject {
     }
 
 
-    private static ROF = 60;
+    private static ROF = 30;
     private fireTimer = Player.ROF;
 
     shoot(progress: number) {
@@ -268,6 +289,9 @@ class Player extends GameObject {
         pTextBasic(ctx, 0, 24, `TURN: ${Math.floor(this.turnFacStore * 100) / 100}`, '#ff00ff')
         pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')
 
+        const posOnCan = GameObject.gTCanPos(this.position);
+        const offset = GameObject.cameraZoom * 32 + 4
+        pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset, `HP: ${this.health}`, "#00ff00")
     }
 }
 
