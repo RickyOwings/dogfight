@@ -30,23 +30,20 @@ export default class {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
         if (this.canvas) console.log("found canvas")
         const fixResolution = () => {
-            console.log("resize");
-            resolution.width = window.innerWidth * 3 / 10;
-            resolution.height = window.innerHeight * 3 / 10;
+            resolution.width = window.innerWidth * resolution.scaleFactor / 10;
+            resolution.height = window.innerHeight * resolution.scaleFactor / 10;
             if (this.oCanvas) {
                 this.oCanvas.width = resolution.width;
                 this.oCanvas.height = resolution.height;
             }
         }
-        setTimeout(fixResolution, 50);
         window.addEventListener('resize', fixResolution);
-
+        //setTimeout(fixResolution, 50);
         this.oCanvas = this.canvas.transferControlToOffscreen();
         this.ctx = this.oCanvas.getContext("2d")
-        if (this.ctx) setTimeout(()=>{titleScreen(this.ctx)}, 51);
-        await awaitUserInput();
         // defining drawing context
-
+        await titleScreen(this.ctx, fixResolution)
+        fixResolution();
         // initializing game objects at the start
         console.log("generating game objects")
         generate();

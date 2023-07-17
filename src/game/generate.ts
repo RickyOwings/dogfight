@@ -1,12 +1,12 @@
 import Player from "./Player" 
-import AntiAir from "./AntiAir"
+import { AntiAir, MissileAAA } from "./AntiAir"
 import { BackgroundElement } from "./BackgroundElements";
 import Explosion from "./Explosion";
 
 export default ()=>{
-    new AntiAir(0, 600);
-    new AntiAir(0, -600);
-    new AntiAir(500, 1000);
+    new AntiAir(0, 3000);
+    new AntiAir(0, -3000);
+    new MissileAAA(3000, 3000);
     new Player(0, 0);
     new BackgroundElement(
         {x: 0, y: 0},

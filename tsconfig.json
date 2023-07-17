@@ -2,8 +2,8 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es6",
+    "module": "ES2016",
+    "target": "ES2016",
     "allowJs": true
   },
   "include": [

@@ -28,6 +28,14 @@ export function scaleVec2(v: Vec2, factor: number): Vec2{
 }
 
 
+export function sqrtVec2(v: Vec2): Vec2{
+    return {
+        x: Math.sqrt(v.x),
+        y: Math.sqrt(v.y)
+    }
+}
+
+
 export function rotateVec2(v: Vec2, angle: number): Vec2{
     return {
         x: v.x * Math.cos(angle) - v.y * Math.sin(angle),

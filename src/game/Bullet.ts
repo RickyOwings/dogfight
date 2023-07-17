@@ -1,4 +1,4 @@
-import AntiAir from "./AntiAir";
+import { AntiAir } from "./AntiAir";
 import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
@@ -48,10 +48,10 @@ class Bullet extends GameObject {
 
         const timeS = progress / 1000;
 
-        this.velocity = subVec2(
+        /*this.velocity = subVec2(
             this.velocity,
             scaleVec2(this.velocity, timeS * 0.3)
-        )
+        )*/
 
         // adjusting the position by the velocity
         this.position = addVec2(

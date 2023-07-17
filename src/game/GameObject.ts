@@ -50,8 +50,8 @@ class GameObject {
 
     public identifier: string = 'generic';
 
-    public static searchByIdentifier(identifier: string): GameObject[]{
-        return GameObject.instances.filter(object => object.identifier == identifier)
+    public static searchByIdentifier(...args: string[]): GameObject[]{
+        return GameObject.instances.filter(object => args.includes(object.identifier));
     }
 
     constructor(){
@@ -61,14 +61,9 @@ class GameObject {
     }
 
 
-    update(progress: number){
+    update(progress: number) : void {}
 
-    }
-
-
-    draw(ctx: OffscreenCanvasRenderingContext2D){
-
-    }
+    draw(ctx: OffscreenCanvasRenderingContext2D){}
 
 }
 

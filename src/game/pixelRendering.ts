@@ -239,6 +239,41 @@ export function pPolyFill(
 }
 
 
+export function pDotCircle(
+    ctx: OffscreenCanvasRenderingContext2D,
+    radius: number,
+    center: Vec2 = {x: 0, y: 0},
+    fillStyle: string | undefined = undefined,
+    dots: number = 16,
+) {
+    if (dots <= 0) return;
+    if (fillStyle) ctx.fillStyle = fillStyle;
+    for(let angle = 0; angle < Math.PI * 2; angle += Math.PI * 2 / dots) {
+        const x = Math.cos(angle) * radius + center.x;
+        const y = Math.sin(angle) * radius + center.y;
+        pDot(ctx, x, y);
+    }
+}
+
+
+export function pLineCircle(
+    ctx: OffscreenCanvasRenderingContext2D,
+    radius: number,
+    center: Vec2 = {x: 0, y: 0},
+    fillStyle: string | undefined = undefined,
+    dots: number = 16,
+) {
+    if (dots <= 0) return;
+    if (fillStyle) ctx.fillStyle = fillStyle;
+    const poly: Vec2[] = [];
+    for(let angle = 0; angle < Math.PI * 2; angle += Math.PI * 2 / dots) {
+        const x = Math.cos(angle) * radius + center.x;
+        const y = Math.sin(angle) * radius + center.y;
+        poly.push({x: x, y: y});
+    }
+    pPoly(ctx, poly);
+}
+
 
 interface TextDict {
     [key: string]: number[][]
@@ -523,6 +558,34 @@ const textDict: TextDict = {
         [0,0,0],
         [0,0,0],
         [0,0,0],
+        [0,1,0]
+    ],
+    ',':[
+        [0,0,0],
+        [0,0,0],
+        [0,0,0],
+        [0,1,0],
+        [1,0,0]
+    ],
+    '+':[
+        [0,0,0],
+        [0,1,0],
+        [1,1,1],
+        [0,1,0],
+        [0,0,0]
+    ],
+    '(':[
+        [0,1,0],
+        [1,0,0],
+        [1,0,0],
+        [1,0,0],
+        [0,1,0]
+    ],
+    ')':[
+        [0,1,0],
+        [0,0,1],
+        [0,0,1],
+        [0,0,1],
         [0,1,0]
     ],
 }

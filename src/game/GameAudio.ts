@@ -17,6 +17,8 @@ class GameAudio {
     private audio: HTMLAudioElement;
 
     setPlaybackRate(rate: number){
+        if (rate < 0.25) return;
+        if (rate > 20) return;
         this.audio.playbackRate = rate;
     }
 
@@ -26,6 +28,10 @@ class GameAudio {
             return;
         }
         this.audio.volume = vol * GameAudio.volume;
+    }
+
+    getDuration(): number {
+        return this.audio.duration;
     }
 
     constructor(url: string) {

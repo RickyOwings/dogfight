@@ -16,6 +16,7 @@ class Player extends GameObject {
     static moveSound: GameAudio = new GameAudio('./assets/sounds/move.ogg');
     static airbrakeSound: GameAudio = new GameAudio('./assets/sounds/airbrake.ogg');
     static windSound: GameAudio = new GameAudio('./assets/sounds/wind.ogg');
+    static damageSound: GameAudio = new GameAudio('./assets/sounds/playerDamage.ogg');
 
     static shape: Vec2[] = [
         { x: 0, y: 5 },
@@ -26,10 +27,10 @@ class Player extends GameObject {
     static color: string = "#00ff00";
 
     public position: Vec2;
-    public velocity: Vec2 = { x: 0, y: 0 };
+    public velocity: Vec2 = { x: 0, y: 300 };
     private acceleration: Vec2 = { x: 0, y: 0 };
 
-    private accelerationStore: Vec2 = { x: 0, y: 0 };
+    public accelerationStore: Vec2 = { x: 0, y: 0 };
 
     private rotation: number = 0;
     private rotVelocity: number = 0;
@@ -94,6 +95,8 @@ class Player extends GameObject {
 
     damage(amount: number){
         this.health-=amount;
+        Player.damageSound.play();
+        Player.damageSound.setPlaybackRate(this.health / 100);
         if (this.health < 0) this.die();
     }
 
@@ -150,7 +153,7 @@ class Player extends GameObject {
 
         const optimalTurnSpeed = 75;
         const vel = vecToDist(this.velocity);
-        const falloff = 1 / (250000 * (vel / 2000))
+        const falloff = 4 / (250000 * (vel / 2000))
         const speedMult = 1 / (falloff * (vel - optimalTurnSpeed) ** 2 + 1)
 
         this.turnFacStore = speedMult;
@@ -222,13 +225,20 @@ class Player extends GameObject {
             this.fireTimer = Player.ROF;
             new Bullet(this.position, this.velocity, this.rotation, "Player")
             Player.shootSound.play();
-            this.acceleration = subVec2(
+
+            this.acceleration = addVec2(
+                this.acceleration, 
+                rotateVec2({x: 0, y: -50}, this.rotation)
+            )
+
+
+            /*this.acceleration = subVec2(
                 this.acceleration,
                 scaleVec2(
                     this.velocity,
                     2
                 )
-            )
+            )*/
 
         }
     }
@@ -282,16 +292,18 @@ class Player extends GameObject {
         pLineV(ctx, aimToCanvas[0], aimToCanvas[1], "#ffffff11")
 
         // textElements
-        pTextBasic(ctx, 0, 0, `PLAYER STATS`, '#ffffff')
+        /*pTextBasic(ctx, 0, 0, `PLAYER STATS`, '#ffffff')
         pTextBasic(ctx, 0, 6, `ACCEL: ${Math.floor(vecToDist(this.accelerationStore))}`, '#ffff00')
         pTextBasic(ctx, 0, 12, `VEL: ${Math.floor(vecToDist(this.velocity))}`, '#0000ff')
         pTextBasic(ctx, 0, 18, `POS: X:${Math.floor(this.position.x)} Y:${Math.floor(this.position.y)}`, '#ff0000')
         pTextBasic(ctx, 0, 24, `TURN: ${Math.floor(this.turnFacStore * 100) / 100}`, '#ff00ff')
-        pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')
+        pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')*/
 
         const posOnCan = GameObject.gTCanPos(this.position);
         const offset = GameObject.cameraZoom * 32 + 4
         pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset, `HP: ${this.health}`, "#00ff00")
+        pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset - 6, `VEL: ${Math.round(vecToDist(this.velocity))}`, "#0000ff")
+        pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset - 12, `ACL: ${Math.round(vecToDist(this.accelerationStore))}`, "#ffff00")
     }
 }
 
