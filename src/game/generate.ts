@@ -1,7 +1,7 @@
 import Player from "./Player" 
 import { AntiAir, MissileAAA } from "./AntiAir"
 import { BackgroundElement } from "./BackgroundElements";
-import Explosion from "./Explosion";
+import mapSize from "./mapSize";
 
 export default ()=>{
     new AntiAir(0, 3000);
@@ -11,10 +11,10 @@ export default ()=>{
     new BackgroundElement(
         {x: 0, y: 0},
         [
-            {x: -3000, y: -3000},
-            {x:  3000, y: -3000},
-            {x:  3000, y:  3000},
-            {x: -3000, y:  3000}
+            {x: -mapSize.width/2, y: -mapSize.height/2},
+            {x:  mapSize.width/2, y: -mapSize.height/2},
+            {x:  mapSize.width/2, y:  mapSize.height/2},
+            {x: -mapSize.width/2, y:  mapSize.height/2}
         ]
     )
 }

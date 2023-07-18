@@ -5,18 +5,21 @@ import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from './pixelRend
 import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
 import GameAudio from './GameAudio';
 import Explosion from './Explosion';
+import Flare from './Flare';
 
 
 
 class Player extends GameObject {
 
-    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k']);
+    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k', ' ']);
 
     static shootSound: GameAudio = new GameAudio('./assets/sounds/shoot.ogg');
     static moveSound: GameAudio = new GameAudio('./assets/sounds/move.ogg');
     static airbrakeSound: GameAudio = new GameAudio('./assets/sounds/airbrake.ogg');
     static windSound: GameAudio = new GameAudio('./assets/sounds/wind.ogg');
     static damageSound: GameAudio = new GameAudio('./assets/sounds/playerDamage.ogg');
+    static flaresLoaded: GameAudio = new GameAudio('./assets/sounds/flaresLoaded.ogg');
+    static outOfFlares: GameAudio = new GameAudio('./assets/sounds/outOfFlares.ogg');
 
     static shape: Vec2[] = [
         { x: 0, y: 5 },
@@ -63,6 +66,7 @@ class Player extends GameObject {
         this.lift();
         this.accelerationStore = scaleVec2(this.acceleration, 1);
         this.phys(progress);
+        this.flare(progress);
         this.shoot(progress);
 
         this.progressStore = progress;
@@ -169,6 +173,7 @@ class Player extends GameObject {
 
 
     private liftStore = 0;
+
     lift() {
         const liftForce: number = rotateVec2(this.velocity, -this.rotation).x * 4
 
@@ -243,6 +248,44 @@ class Player extends GameObject {
         }
     }
 
+    private static FlareROF = 500;
+    private flareFireTimer = Player.FlareROF;
+    private static initalFlareCount: number = 15;
+    private flares: number = Player.initalFlareCount;
+    private reloadingFlares: boolean = false;
+
+    flare(progress: number) {
+        if (this.flareFireTimer > 0) {
+            this.flareFireTimer -= progress;
+            return;
+        }
+        const xDisp = 1000;
+        const yDisp = 400;
+        if (this.flares <= 0 && !this.reloadingFlares){
+            this.reloadingFlares = true;
+            Player.outOfFlares.play();
+            setTimeout(()=>{
+                Player.flaresLoaded.play();
+                this.flares = Player.initalFlareCount
+                this.reloadingFlares = false;
+            }, 10000);
+        }
+
+        if (this.reloadingFlares) return;
+
+        if (Player.input.isPressed(' ')) {
+            this.flares--;
+            this.flareFireTimer = Player.FlareROF;
+            new Flare(this.position, addVec2(
+                this.velocity, 
+                rotateVec2({
+                    x: Math.random() * xDisp - xDisp / 2,
+                    y: -yDisp
+                }, this.rotation)
+            ));
+        }
+    }
+
 
     draw(ctx: OffscreenCanvasRenderingContext2D) {
         // drawing the player
@@ -296,14 +339,14 @@ class Player extends GameObject {
         pTextBasic(ctx, 0, 6, `ACCEL: ${Math.floor(vecToDist(this.accelerationStore))}`, '#ffff00')
         pTextBasic(ctx, 0, 12, `VEL: ${Math.floor(vecToDist(this.velocity))}`, '#0000ff')
         pTextBasic(ctx, 0, 18, `POS: X:${Math.floor(this.position.x)} Y:${Math.floor(this.position.y)}`, '#ff0000')
-        pTextBasic(ctx, 0, 24, `TURN: ${Math.floor(this.turnFacStore * 100) / 100}`, '#ff00ff')
-        pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')*/
+        pTextBasic(ctx, 0, 24, `TURN: ${Math.floor(this.turnFacStore * 100) / 100}`, '#ff00ff')*/
+        pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')
 
         const posOnCan = GameObject.gTCanPos(this.position);
         const offset = GameObject.cameraZoom * 32 + 4
         pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset, `HP: ${this.health}`, "#00ff00")
         pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset - 6, `VEL: ${Math.round(vecToDist(this.velocity))}`, "#0000ff")
-        pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset - 12, `ACL: ${Math.round(vecToDist(this.accelerationStore))}`, "#ffff00")
+        pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset - 12, `FLRS: ${this.flares}`, "#ffff00")
     }
 }
 

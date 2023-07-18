@@ -7,6 +7,7 @@ import Player from "./Player";
 import { addVec2, angleBetVecs, distBetVecs, polyOffset, scaleVec2, sqrtVec2, Vec2 } from "./Vec2";
 import { pDotCircle, pLineCircle, pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
 import resolution from "./resolution";
+import mapSize from "./mapSize";
 
 export class AntiAir extends GameObject {
     static color: string = "#ff0000";
@@ -49,8 +50,8 @@ export class AntiAir extends GameObject {
     die() {
         this.isGarbage = true
         setTimeout(() => {
-            new AntiAir(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
-            new AntiAir(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
+            new AntiAir(mapSize.width * Math.random() - mapSize.width/2, mapSize.height * Math.random() - mapSize.height/2)
+            new AntiAir(mapSize.width * Math.random() - mapSize.width/2, mapSize.height * Math.random() - mapSize.height/2)
         }, 4000)
         new Explosion(this.position)
     }
@@ -200,10 +201,12 @@ export class AntiAir extends GameObject {
 
 export class MissileAAA extends AntiAir {
     color: string = "#ffaa00";
+    static shootSound: GameAudio = new GameAudio('./assets/sounds/missileLaunch.ogg')
     constructor(x: number, y: number) {
+        MissileAAA.shootSound.setPlaybackRate(2);
         super(x, y);
         this.ROF = 8000;
-        this.range = 2000;
+        this.range = 4000;
     }
 
 
@@ -227,7 +230,7 @@ export class MissileAAA extends AntiAir {
 
     fireMissile(angle: number, player: Player): void {
         new Missile(this.position, { x: 0, y: 0 }, angle - Math.PI / 2, 'AntiAir', player)
-        AntiAir.shootSound.play();
+        MissileAAA.shootSound.play();
     }
 
 
@@ -237,8 +240,8 @@ export class MissileAAA extends AntiAir {
     die() {
         this.isGarbage = true
         setTimeout(() => {
-            new MissileAAA(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
-            new MissileAAA(6000 * Math.random() - 3000, 6000 * Math.random() - 3000)
+            new MissileAAA(mapSize.width * Math.random() - mapSize.width/2, mapSize.height * Math.random() - mapSize.height/2)
+            new MissileAAA(mapSize.width * Math.random() - mapSize.width/2, mapSize.height * Math.random() - mapSize.height/2)
         }, 4000)
         new Explosion(this.position)
     }

@@ -1,25 +1,20 @@
+import GameAudio from "./GameAudio";
 import GameObject from "./GameObject";
+import Spark from "./Sparks";
 import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
 import { insidePoly, pDot, pLineV } from "./pixelRendering";
 
-class Spark extends GameObject {
-    private position: Vec2;
-    private velocity: Vec2;
-    private rand: number;
-
-    constructor(pos: Vec2, vel: Vec2, rand: number = 5) {
+class Flare extends GameObject {
+    public position: Vec2;
+    public velocity: Vec2;
+    private sound: GameAudio = new GameAudio('./assets/sounds/flare.ogg')
+    constructor(pos: Vec2, vel: Vec2) {
         super();
+        this.identifier = 'Flare'
         this.position = pos;
-        const startRand = 60 * rand;
-        this.velocity = addVec2(
-            scaleVec2(vel, 0.5),
-            {
-                x: Math.random() * startRand - startRand / 2,
-                y: Math.random() * startRand - startRand / 2,
-            }
-        )
+        this.velocity = vel;
         this.setZIndex(254);
-        this.rand = rand;
+        this.sound.play();
     }
 
 
@@ -35,15 +30,16 @@ class Spark extends GameObject {
         pLineV(ctx, line[0], line[1], `rgba(255, ${this.lifeTime * 205 / this.life + 50}, ${this.lifeTime * 400 / this.life - 200 } , ${this.lifeTime / this.life})`);
     }
 
-    private life: number = 500 + Math.random() * 300;
+    private life: number = 2000;
     private lifeTime: number = this.life;
 
     update(progress: number): void {
 
+        new Spark(this.position, this.velocity, 0.5);
         if (this.lifeTime < 0) this.isGarbage = true;
 
         const timeS = progress / 1000;
-        const randomness = this.rand;
+        const randomness = 5;
 
         this.velocity = addVec2(
             this.velocity,
@@ -67,4 +63,4 @@ class Spark extends GameObject {
     }
 }
 
-export default Spark;
+export default Flare;
