@@ -1,9 +1,9 @@
 import { AntiAir } from "./AntiAir";
-import GameAudio from "./GameAudio";
+import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
-import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
-import { insidePoly, pDot, pLineV } from "./pixelRendering";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "../Utility/Vec2";
+import { insidePoly, pDot, pLineV } from "../Utility/pixelRendering";
 
 class Bullet extends GameObject {
     public static lauchVel: number = 600;

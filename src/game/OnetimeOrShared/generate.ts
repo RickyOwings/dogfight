@@ -1,7 +1,7 @@
-import Player from "./Player" 
-import { AntiAir, MissileAAA } from "./AntiAir"
-import { BackgroundElement } from "./BackgroundElements";
-import mapSize from "./mapSize";
+import Player from "../GameObject/Player" 
+import { AntiAir, MissileAAA } from "../GameObject/AntiAir"
+import { BackgroundElement } from "../GameObject/BackgroundElements";
+import mapSize from "../OnetimeOrShared/mapSize";
 
 export default ()=>{
     new AntiAir(0, 3000);

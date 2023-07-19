@@ -1,9 +1,9 @@
 import Bullet from './Bullet';
 import GameObject from './GameObject';
-import Input from './input';
-import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from './pixelRendering';
-import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
-import GameAudio from './GameAudio';
+import Input from '../Utility/input';
+import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from '../Utility/pixelRendering';
+import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from '../Utility/Vec2';
+import GameAudio from '../Utility/GameAudio';
 import Explosion from './Explosion';
 import Flare from './Flare';
 

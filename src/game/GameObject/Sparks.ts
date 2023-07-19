@@ -1,6 +1,6 @@
 import GameObject from "./GameObject";
-import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
-import { insidePoly, pDot, pLineV } from "./pixelRendering";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "../Utility/Vec2";
+import { insidePoly, pDot, pLineV } from "../Utility/pixelRendering";
 
 class Spark extends GameObject {
     private position: Vec2;

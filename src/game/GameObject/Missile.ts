@@ -1,11 +1,11 @@
 import { AntiAir } from "./AntiAir";
 import Flare from "./Flare";
-import GameAudio from "./GameAudio";
+import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Player from "./Player";
 import Spark from "./Sparks";
-import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset, angleBetVecs, distBetVecs, vecToDist } from "./Vec2";
-import { insidePoly, pDot, pLineCircle, pLineV, pTextBasic } from "./pixelRendering";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset, angleBetVecs, distBetVecs, vecToDist } from "../Utility/Vec2";
+import { insidePoly, pDot, pLineCircle, pLineV, pTextBasic } from "../Utility/pixelRendering";
 
 interface Target {
     position: Vec2,

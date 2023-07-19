@@ -1,13 +1,13 @@
 import Bullet from "./Bullet";
 import Explosion from "./Explosion";
-import GameAudio from "./GameAudio";
+import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Missile from "./Missile";
 import Player from "./Player";
-import { addVec2, angleBetVecs, distBetVecs, polyOffset, scaleVec2, sqrtVec2, Vec2 } from "./Vec2";
-import { pDotCircle, pLineCircle, pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
-import resolution from "./resolution";
-import mapSize from "./mapSize";
+import { addVec2, angleBetVecs, distBetVecs, polyOffset, scaleVec2, sqrtVec2, Vec2 } from "../Utility/Vec2";
+import { pDotCircle, pLineCircle, pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "../Utility/pixelRendering";
+import resolution from "../OnetimeOrShared/resolution";
+import mapSize from "../OnetimeOrShared/mapSize";
 
 export class AntiAir extends GameObject {
     static color: string = "#ff0000";

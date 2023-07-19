@@ -1,9 +1,9 @@
-import asyncPageLoad from './awaitPageLoad';
-import GameObject from './GameObject'
-import resolution from './resolution';
-import generate from './generate';
-import awaitUserInput from './awaitUserInput';
-import titleScreen from './titleScreen';
+import asyncPageLoad from './Utility/awaitPageLoad';
+import GameObject from './GameObject/GameObject'
+import resolution from './OnetimeOrShared/resolution';
+import generate from './OnetimeOrShared/generate';
+import awaitUserInput from './Utility/awaitUserInput';
+import titleScreen from './OnetimeOrShared/titleScreen';
 
 
 interface GameParams {

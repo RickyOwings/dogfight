@@ -1,5 +1,5 @@
-import { Vec2 } from "./Vec2";
-import resolution from "./resolution";
+import { Vec2 } from "../Utility/Vec2";
+import resolution from "../OnetimeOrShared/resolution";
 
 /*
     A game object is simply an object that has three main functions. It has an update function that takes
