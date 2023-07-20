@@ -1,14 +1,19 @@
 import Bullet from "./Bullet.js";
 import GameObject from "./GameObject.js";
-import Input from "./input.js";
-import {pLineV, pPoly, pPolyFillStip, pTextBasic} from "./pixelRendering.js";
-import {polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist} from "./Vec2.js";
-import GameAudio from "./GameAudio.js";
+import Input from "../Utility/input.js";
+import {pLineV, pPoly, pPolyFillStip, pTextBasic} from "../Utility/pixelRendering.js";
+import {polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist} from "../Utility/Vec2.js";
+import GameAudio from "../Utility/GameAudio.js";
 import Explosion from "./Explosion.js";
 import Flare from "./Flare.js";
 const _Player = class extends GameObject {
   constructor(x, y) {
     super();
+    this.shape = [
+      {x: 0, y: 5},
+      {x: -3, y: -5},
+      {x: 3, y: -5}
+    ];
     this.velocity = {x: 0, y: 300};
     this.acceleration = {x: 0, y: 0};
     this.accelerationStore = {x: 0, y: 0};
@@ -52,13 +57,13 @@ const _Player = class extends GameObject {
     const zoom = _Player.input.isPressed("=") ? 1 : 0;
     const reset = _Player.input.isPressed("0") ? 1 : 0;
     if (out)
-      _Player.zoomState = 0.25;
+      _Player.zoomState = 0.1;
     if (zoom)
-      _Player.zoomState = 3;
-    if (reset)
       _Player.zoomState = 1;
+    if (reset)
+      _Player.zoomState = 0.25;
     GameObject.setCameraZoom((1 - 7 * (vecToDist(this.velocity) / 7500)) * _Player.zoomState);
-    const zoomFactor = _Player.zoomState == 0.25 ? 0 : 0.25 / GameObject.cameraZoom;
+    const zoomFactor = _Player.input.isPressed("u") ? 0 : 0.25 / GameObject.cameraZoom;
     const cameraPos = addVec2(this.position, scaleVec2(this.velocity, zoomFactor));
     GameObject.setCameraPosition(cameraPos.x, cameraPos.y);
   }
@@ -177,7 +182,7 @@ const _Player = class extends GameObject {
     }
   }
   draw(ctx) {
-    const rotated = polyRotate(_Player.shape, this.rotation);
+    const rotated = polyRotate(this.shape, this.rotation);
     const translated = polyOffset(rotated, this.position);
     const toCanvas = GameObject.gTCanPosPoly(translated);
     pPolyFillStip(ctx, toCanvas, _Player.color);
@@ -209,7 +214,7 @@ const _Player = class extends GameObject {
   }
 };
 let Player = _Player;
-Player.input = new Input(["w", "a", "s", "d", "-", "=", "0", "j", "k", " "]);
+Player.input = new Input(["w", "a", "s", "d", "-", "=", "0", "j", "k", " ", "u"]);
 Player.shootSound = new GameAudio("./assets/sounds/shoot.ogg");
 Player.moveSound = new GameAudio("./assets/sounds/move.ogg");
 Player.airbrakeSound = new GameAudio("./assets/sounds/airbrake.ogg");
@@ -217,13 +222,8 @@ Player.windSound = new GameAudio("./assets/sounds/wind.ogg");
 Player.damageSound = new GameAudio("./assets/sounds/playerDamage.ogg");
 Player.flaresLoaded = new GameAudio("./assets/sounds/flaresLoaded.ogg");
 Player.outOfFlares = new GameAudio("./assets/sounds/outOfFlares.ogg");
-Player.shape = [
-  {x: 0, y: 5},
-  {x: -3, y: -5},
-  {x: 3, y: -5}
-];
 Player.color = "#00ff00";
-Player.zoomState = 0.25;
+Player.zoomState = 0.1;
 Player.ROF = 30;
 Player.FlareROF = 500;
 Player.initalFlareCount = 15;

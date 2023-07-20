@@ -1,6 +1,6 @@
 import GameObject from "./GameObject.js";
-import {polyOffset} from "./Vec2.js";
-import {pPolyFill} from "./pixelRendering.js";
+import {polyOffset} from "../Utility/Vec2.js";
+import {pPolyFill} from "../Utility/pixelRendering.js";
 const _BackgroundElement = class extends GameObject {
   constructor(pos, shape) {
     super();

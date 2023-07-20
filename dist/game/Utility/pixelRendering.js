@@ -1,4 +1,4 @@
-import resolution from "./resolution.js";
+import resolution from "../OnetimeOrShared/resolution.js";
 export function pDot(ctx, x, y, fillStyle = void 0) {
   if (x < 0 || y < 0 || x >= resolution.width || y >= resolution.height)
     return;
