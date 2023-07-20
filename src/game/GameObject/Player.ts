@@ -332,7 +332,7 @@ class Player extends GameObject {
         ];
 
         const aimToCanvas = GameObject.gTCanPosPoly(aim);
-        pLineV(ctx, aimToCanvas[0], aimToCanvas[1], "#ffffff11")
+        pLineV(ctx, aimToCanvas[0], aimToCanvas[1], "#ffffff44")
 
         // textElements
         /*pTextBasic(ctx, 0, 0, `PLAYER STATS`, '#ffffff')
