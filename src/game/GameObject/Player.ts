@@ -1,9 +1,9 @@
 import Bullet from './Bullet';
 import GameObject from './GameObject';
-import Input from './input';
-import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from './pixelRendering';
-import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from './Vec2';
-import GameAudio from './GameAudio';
+import Input from '../Utility/input';
+import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from '../Utility/pixelRendering';
+import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from '../Utility/Vec2';
+import GameAudio from '../Utility/GameAudio';
 import Explosion from './Explosion';
 import Flare from './Flare';
 
@@ -11,7 +11,7 @@ import Flare from './Flare';
 
 class Player extends GameObject {
 
-    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k', ' ']);
+    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k', ' ', 'u']);
 
     static shootSound: GameAudio = new GameAudio('./assets/sounds/shoot.ogg');
     static moveSound: GameAudio = new GameAudio('./assets/sounds/move.ogg');
@@ -21,7 +21,7 @@ class Player extends GameObject {
     static flaresLoaded: GameAudio = new GameAudio('./assets/sounds/flaresLoaded.ogg');
     static outOfFlares: GameAudio = new GameAudio('./assets/sounds/outOfFlares.ogg');
 
-    static shape: Vec2[] = [
+    public shape: Vec2[] = [
         { x: 0, y: 5 },
         { x: -3, y: -5 },
         { x: 3, y: -5 },
@@ -31,13 +31,13 @@ class Player extends GameObject {
 
     public position: Vec2;
     public velocity: Vec2 = { x: 0, y: 300 };
-    private acceleration: Vec2 = { x: 0, y: 0 };
+    public acceleration: Vec2 = { x: 0, y: 0 };
 
     public accelerationStore: Vec2 = { x: 0, y: 0 };
 
-    private rotation: number = 0;
-    private rotVelocity: number = 0;
-    private rotAcceleration: number = 0;
+    public rotation: number = 0;
+    public rotVelocity: number = 0;
+    public rotAcceleration: number = 0;
 
     constructor(x: number, y: number) {
         super();
@@ -55,7 +55,7 @@ class Player extends GameObject {
         Player.windSound.loop();
     }
 
-    private static zoomState = 0.25;
+    private static zoomState = 0.1;
     private progressStore: number = 11;
     update(progress: number) {
         this.setPlaybackRate();
@@ -75,15 +75,15 @@ class Player extends GameObject {
         const zoom = (Player.input.isPressed('=')) ? 1 : 0;
         const reset = (Player.input.isPressed('0')) ? 1 : 0;
 
-        if (out) Player.zoomState = 0.25;
-        if (zoom) Player.zoomState = 3;
-        if (reset) Player.zoomState = 1;
+        if (out) Player.zoomState = 0.1;
+        if (zoom) Player.zoomState = 1;
+        if (reset) Player.zoomState = 0.25;
 
         GameObject.setCameraZoom(
               (1 - (7 * (vecToDist(this.velocity) / 7500 ))) * Player.zoomState
         )
 
-        const zoomFactor = (Player.zoomState == 0.25) ? 0 : 0.25 / GameObject.cameraZoom;
+        const zoomFactor = (Player.input.isPressed('u')) ? 0 : 0.25 / GameObject.cameraZoom;
 
         const cameraPos: Vec2 = addVec2(
             this.position,
@@ -289,7 +289,7 @@ class Player extends GameObject {
 
     draw(ctx: OffscreenCanvasRenderingContext2D) {
         // drawing the player
-        const rotated = polyRotate(Player.shape, this.rotation);
+        const rotated = polyRotate(this.shape, this.rotation);
         const translated = polyOffset(rotated, this.position);
         const toCanvas = GameObject.gTCanPosPoly(translated);
 

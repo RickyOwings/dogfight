@@ -1,5 +1,5 @@
-import { Vec2 } from "./Vec2";
-import resolution from "./resolution";
+import { Vec2 } from "../Utility/Vec2";
+import resolution from "../OnetimeOrShared/resolution";
 
 /*
     A game object is simply an object that has three main functions. It has an update function that takes
@@ -52,6 +52,15 @@ class GameObject {
 
     public static searchByIdentifier(...args: string[]): GameObject[]{
         return GameObject.instances.filter(object => args.includes(object.identifier));
+    }
+
+    public position: Vec2;
+    public rotation: number = 0;
+    public velocity: Vec2;
+    public acceleration: Vec2;
+    public accelerationStore: Vec2;
+    public getAcceleration(): Vec2 {
+        return this.accelerationStore;
     }
 
     constructor(){

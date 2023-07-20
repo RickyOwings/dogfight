@@ -1,8 +1,8 @@
-import GameAudio from "./GameAudio";
-import awaitUserInput from "./awaitUserInput"
-import { pTextBasic } from "./pixelRendering"
-import resolution from "./resolution"
-import wait from "./wait"
+import GameAudio from "../Utility/GameAudio";
+import awaitUserInput from "../Utility/awaitUserInput"
+import { pTextBasic } from "../Utility/pixelRendering"
+import resolution from "../OnetimeOrShared/resolution"
+import wait from "../Utility/wait"
 
 function clearCanvas(ctx: OffscreenCanvasRenderingContext2D) {
     ctx.clearRect(0, 0, resolution.width, resolution.height);

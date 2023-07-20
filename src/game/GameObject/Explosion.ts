@@ -1,8 +1,8 @@
-import GameAudio from "./GameAudio";
+import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
-import { addVec2, polyOffset, polyScale, Vec2 } from "./Vec2";
-import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "./pixelRendering";
+import { addVec2, polyOffset, polyScale, Vec2 } from "../Utility/Vec2";
+import { pPoly, pPolyFill, pPolyFillStip, pTextBasic } from "../Utility/pixelRendering";
 
 class Explosion extends GameObject {
     

@@ -1,9 +1,9 @@
 import { AntiAir } from "./AntiAir";
-import GameAudio from "./GameAudio";
+import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Spark from "./Sparks";
-import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "./Vec2";
-import { insidePoly, pDot, pLineV } from "./pixelRendering";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset } from "../Utility/Vec2";
+import { insidePoly, pDot, pLineV } from "../Utility/pixelRendering";
 
 class Bullet extends GameObject {
     public static lauchVel: number = 600;
@@ -11,8 +11,6 @@ class Bullet extends GameObject {
     private static dispersion: number = 0.02;
     private static hit: GameAudio = new GameAudio('./assets/sounds/hit.ogg')
 
-    private position: Vec2;
-    private velocity: Vec2;
     private owner: string;
 
     constructor(pos: Vec2, vel: Vec2, angle: number, owner: string) {
@@ -68,7 +66,7 @@ class Bullet extends GameObject {
 
         const enemies = GameObject.searchByIdentifier(searchType) as AntiAir[];
         enemies.forEach((enemy) => {
-            const enemyPoly = polyOffset(AntiAir.shape, enemy.position);
+            const enemyPoly = polyOffset(enemy.shape, enemy.position);
             if (insidePoly(this.position, enemyPoly)) {
                 Bullet.hit.play();
                 enemy.damage(1);

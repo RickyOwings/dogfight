@@ -1,5 +1,5 @@
 import { Vec2 } from "./Vec2";
-import resolution from "./resolution";
+import resolution from "../OnetimeOrShared/resolution";
 
 export function pDot(
     ctx: OffscreenCanvasRenderingContext2D,
