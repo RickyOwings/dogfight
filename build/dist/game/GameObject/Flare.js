@@ -1,8 +1,8 @@
-import GameAudio from "./GameAudio.js";
+import GameAudio from "../Utility/GameAudio.js";
 import GameObject from "./GameObject.js";
 import Spark from "./Sparks.js";
-import {scaleVec2, addVec2, subVec2} from "./Vec2.js";
-import {pLineV} from "./pixelRendering.js";
+import {scaleVec2, addVec2, subVec2} from "../Utility/Vec2.js";
+import {pLineV} from "../Utility/pixelRendering.js";
 class Flare extends GameObject {
   constructor(pos, vel) {
     super();

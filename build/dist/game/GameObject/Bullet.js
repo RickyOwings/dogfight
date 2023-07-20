@@ -1,9 +1,8 @@
-import {AntiAir} from "./AntiAir.js";
-import GameAudio from "./GameAudio.js";
+import GameAudio from "../Utility/GameAudio.js";
 import GameObject from "./GameObject.js";
 import Spark from "./Sparks.js";
-import {scaleVec2, addVec2, rotateVec2, polyOffset} from "./Vec2.js";
-import {insidePoly, pLineV} from "./pixelRendering.js";
+import {scaleVec2, addVec2, rotateVec2, polyOffset} from "../Utility/Vec2.js";
+import {insidePoly, pLineV} from "../Utility/pixelRendering.js";
 const _Bullet = class extends GameObject {
   constructor(pos, vel, angle, owner) {
     super();
@@ -34,7 +33,7 @@ const _Bullet = class extends GameObject {
     const searchType = this.owner == "Player" ? "AntiAir" : "Player";
     const enemies = GameObject.searchByIdentifier(searchType);
     enemies.forEach((enemy) => {
-      const enemyPoly = polyOffset(AntiAir.shape, enemy.position);
+      const enemyPoly = polyOffset(enemy.shape, enemy.position);
       if (insidePoly(this.position, enemyPoly)) {
         _Bullet.hit.play();
         enemy.damage(1);

@@ -1,8 +1,9 @@
-import resolution from "./resolution.js";
+import resolution from "../OnetimeOrShared/resolution.js";
 const _GameObject = class {
   constructor() {
     this.zIndex = 0;
     this.identifier = "generic";
+    this.rotation = 0;
     this.isGarbage = false;
     _GameObject.instances.push(this);
     this.setZIndex(0);
@@ -37,6 +38,9 @@ const _GameObject = class {
   }
   static searchByIdentifier(...args) {
     return _GameObject.instances.filter((object) => args.includes(object.identifier));
+  }
+  getAcceleration() {
+    return this.accelerationStore;
   }
   update(progress) {
   }

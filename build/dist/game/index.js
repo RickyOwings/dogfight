@@ -1,8 +1,8 @@
-import asyncPageLoad from "./awaitPageLoad.js";
-import GameObject from "./GameObject.js";
-import resolution from "./resolution.js";
-import generate from "./generate.js";
-import titleScreen from "./titleScreen.js";
+import asyncPageLoad from "./Utility/awaitPageLoad.js";
+import GameObject from "./GameObject/GameObject.js";
+import resolution from "./OnetimeOrShared/resolution.js";
+import generate from "./OnetimeOrShared/generate.js";
+import titleScreen from "./OnetimeOrShared/titleScreen.js";
 export default class {
   constructor(params) {
     this.canvas = void 0;

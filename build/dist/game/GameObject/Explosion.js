@@ -1,8 +1,8 @@
-import GameAudio from "./GameAudio.js";
+import GameAudio from "../Utility/GameAudio.js";
 import GameObject from "./GameObject.js";
 import Spark from "./Sparks.js";
-import {polyOffset, polyScale} from "./Vec2.js";
-import {pPoly, pPolyFill, pPolyFillStip, pTextBasic} from "./pixelRendering.js";
+import {polyOffset, polyScale} from "../Utility/Vec2.js";
+import {pPoly, pPolyFill, pPolyFillStip, pTextBasic} from "../Utility/pixelRendering.js";
 const _Explosion = class extends GameObject {
   constructor(pos) {
     _Explosion.sound.play();

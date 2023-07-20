@@ -1,6 +1,6 @@
 import GameObject from "./GameObject.js";
-import {scaleVec2, addVec2, subVec2} from "./Vec2.js";
-import {pLineV} from "./pixelRendering.js";
+import {scaleVec2, addVec2, subVec2} from "../Utility/Vec2.js";
+import {pLineV} from "../Utility/pixelRendering.js";
 class Spark extends GameObject {
   constructor(pos, vel, rand = 5) {
     super();

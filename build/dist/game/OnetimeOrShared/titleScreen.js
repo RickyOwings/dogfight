@@ -1,8 +1,8 @@
-import GameAudio from "./GameAudio.js";
-import awaitUserInput from "./awaitUserInput.js";
-import {pTextBasic} from "./pixelRendering.js";
+import GameAudio from "../Utility/GameAudio.js";
+import awaitUserInput from "../Utility/awaitUserInput.js";
+import {pTextBasic} from "../Utility/pixelRendering.js";
 import resolution from "./resolution.js";
-import wait from "./wait.js";
+import wait from "../Utility/wait.js";
 function clearCanvas(ctx) {
   ctx.clearRect(0, 0, resolution.width, resolution.height);
 }
