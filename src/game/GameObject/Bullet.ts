@@ -11,8 +11,6 @@ class Bullet extends GameObject {
     private static dispersion: number = 0.02;
     private static hit: GameAudio = new GameAudio('./assets/sounds/hit.ogg')
 
-    private position: Vec2;
-    private velocity: Vec2;
     private owner: string;
 
     constructor(pos: Vec2, vel: Vec2, angle: number, owner: string) {
@@ -68,7 +66,7 @@ class Bullet extends GameObject {
 
         const enemies = GameObject.searchByIdentifier(searchType) as AntiAir[];
         enemies.forEach((enemy) => {
-            const enemyPoly = polyOffset(AntiAir.shape, enemy.position);
+            const enemyPoly = polyOffset(enemy.shape, enemy.position);
             if (insidePoly(this.position, enemyPoly)) {
                 Bullet.hit.play();
                 enemy.damage(1);

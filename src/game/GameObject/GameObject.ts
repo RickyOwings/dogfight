@@ -54,6 +54,15 @@ class GameObject {
         return GameObject.instances.filter(object => args.includes(object.identifier));
     }
 
+    public position: Vec2;
+    public rotation: number = 0;
+    public velocity: Vec2;
+    public acceleration: Vec2;
+    public accelerationStore: Vec2;
+    public getAcceleration(): Vec2 {
+        return this.accelerationStore;
+    }
+
     constructor(){
         this.isGarbage = false;
         GameObject.instances.push(this); 

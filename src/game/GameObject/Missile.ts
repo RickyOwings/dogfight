@@ -4,7 +4,7 @@ import GameAudio from "../Utility/GameAudio";
 import GameObject from "./GameObject";
 import Player from "./Player";
 import Spark from "./Sparks";
-import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset, angleBetVecs, distBetVecs, vecToDist } from "../Utility/Vec2";
+import { scaleVec2, addVec2, rotateVec2, Vec2, subVec2, polyOffset, angleBetVecs, distBetVecs, vecToDist, polyRotate } from "../Utility/Vec2";
 import { insidePoly, pDot, pLineCircle, pLineV, pTextBasic } from "../Utility/pixelRendering";
 
 interface Target {
@@ -14,16 +14,13 @@ interface Target {
 }
 
 
-class Missile extends GameObject {
-    public static lauchVel: number = 300;
-    private static color: string = "#ffffff";
-    private static dispersion: number = 0.02;
+export class Missile extends GameObject {
+    public color: string = "#ffaa00";
+    public lineColor: string = "#ffaa0044";
     private static hit: GameAudio = new GameAudio('./assets/sounds/explosion.ogg')
 
-    private position: Vec2;
-    private velocity: Vec2;
-    private acceleration: Vec2 = { x: 0, y: 0 };
-    private rotation: number = 0;
+    public acceleration: Vec2 = { x: 0, y: 0 };
+    public rotation: number = 0;
     private rotVelocity: number = 0;
     private rotAcceleration: number = 0;
     private owner: string;
@@ -31,17 +28,17 @@ class Missile extends GameObject {
     private audio: GameAudio;
     private justSpawned: boolean = true;
 
-    constructor(pos: Vec2, vel: Vec2, angle: number, owner: string, target: Player) {
+    constructor(pos: Vec2, vel: Vec2, angle: number, owner: string, launchVel: number = 300) {
         super();
         this.position = pos;
         this.rotation = angle;
         this.velocity = addVec2(vel, rotateVec2(
-            { x: 0, y: Missile.lauchVel }, angle + Math.random() * Missile.dispersion - 0.5 * Missile.dispersion
+            { x: 0, y: launchVel }, angle
         ));
+        this.target = GameObject.searchByIdentifier('Player')[0] as Target;
         this.owner = owner;
         this.setZIndex(254);
         this.identifier = "Missile";
-        this.target = target;
         this.audio = new GameAudio('./assets/sounds/missileSound.ogg');
         this.audio.setPlaybackRate(4);
         this.audio.setVolume(0.1);
@@ -49,13 +46,14 @@ class Missile extends GameObject {
     }
 
 
-    private fuel: number = 10000;
-    private guideFuel: number = 20000;
+    public fuel: number = 10000;
+    public guideFuel: number = 20000;
+    public thrustForce: number = 60;
 
-    private life: number = 20000;
-    private lifeTime: number = this.life;
+    public life: number = 20000;
+    public lifeTime: number = this.life;
 
-    private leadStore: Vec2 = { x: 0, y: 0 }
+    public leadStore: Vec2 = { x: 0, y: 0 }
 
     update(progress: number): void {
         if (this.lifeTime < 0) this.die(false);
@@ -86,8 +84,8 @@ class Missile extends GameObject {
     }
 
     private rotationTarget: number = 0;
-    private lostTarget: boolean = false;
-    private maxAngle: number = Math.PI / 3;
+    public lostTarget: boolean = false;
+    public maxAngle: number = Math.PI / 3;
 
     flare(progress: number) {
         const flares = GameObject.searchByIdentifier('Flare') as Flare[];
@@ -109,6 +107,8 @@ class Missile extends GameObject {
         })
     }
 
+    public doLead: boolean = true;
+
     guidance(progress: number) {
         this.fuel -= progress;
         this.guideFuel -= progress;
@@ -129,10 +129,11 @@ class Missile extends GameObject {
             const dv = subVec2(this.target.velocity, this.velocity);
             const dist = distBetVecs(this.position, this.target.position);
             const timeToTarget = dist / vecToDist(dv);
-            const lead = addVec2(
+            let lead = addVec2(
                 this.target.position,
                 scaleVec2(this.target.velocity, timeToTarget)
             );
+            if (!this.doLead) lead = this.target.position;
             let rotationTarget = angleBetVecs(this.position, lead) - Math.PI / 2
             rotationTarget = rotationTarget % (Math.PI * 2)
             if (rotationTarget < 0) rotationTarget += Math.PI * 2
@@ -150,7 +151,7 @@ class Missile extends GameObject {
             addVec2(
                 this.acceleration,
                 rotateVec2(
-                    { x: 0, y: 60 },
+                    { x: 0, y: this.thrustForce },
                     this.rotation
                 )
             )
@@ -213,6 +214,9 @@ class Missile extends GameObject {
     }
 
 
+    public turnForce: number = 32;
+
+
     turn() {
         if (this.lostTarget) return;
         const deltaTarget = this.rotationTarget - this.rotation;
@@ -224,20 +228,35 @@ class Missile extends GameObject {
         const vel = vecToDist(this.velocity);
         const falloff = 1 / (160000 * (vel / 2000))
         const speedMult = 1 / (falloff * (vel - optimalTurnSpeed) ** 2 + 1)
-        this.rotAcceleration += speedMult * turn * 32;
+        this.rotAcceleration += speedMult * turn * this.turnForce;
     }
+
+
+    public hitDistance: number = 10;
+    
 
     checkCollision() {
         const searchType = (this.owner == "Player") ? 'AntiAir' : 'Player';
         const enemies = GameObject.searchByIdentifier(searchType) as AntiAir[];
         enemies.forEach((enemy) => {
-            const enemyPoly = polyOffset(AntiAir.shape, enemy.position);
+            const distance = distBetVecs(enemy.position, this.position);
+            if (distance < this.hitDistance) {
+                this.hit(enemy);
+            }
+            /*const enemyPoly = polyOffset(enemy.shape, enemy.position);
             if (insidePoly(this.position, enemyPoly)) {
                 this.lostTarget = true;
                 enemy.damage(20);
                 this.die();
-            }
+            }*/
         })
+    }
+
+
+    hit(enemy: AntiAir){
+        this.lostTarget = true;
+        enemy.damage(20);
+        this.die();
     }
 
 
@@ -257,6 +276,7 @@ class Missile extends GameObject {
         }
     }
 
+
     draw(ctx: OffscreenCanvasRenderingContext2D): void {
         //const drawPosition = GameObject.gTCanPos(this.position);
         const line = GameObject.gTCanPosPoly([
@@ -266,14 +286,14 @@ class Missile extends GameObject {
             ),
             this.position
         ]);
-        pLineV(ctx, line[0], line[1], `#ffaa00`);
+        pLineV(ctx, line[0], line[1], this.color);
         if (this.guideFuel > 0 && !this.lostTarget) {
             //pLineV(ctx, GameObject.gTCanPos(this.leadStore), GameObject.gTCanPos(this.target.position), `#ffaa0022`);
             //pLineV(ctx, line[0], GameObject.gTCanPos(this.leadStore), `#ffaa0022`);
             //pLineV(ctx, line[0], GameObject.gTCanPos(this.leadStore), `#ffaa0022`,);
             //pLineCircle(ctx, 4, GameObject.gTCanPos(this.leadStore), `#ffaa0022`,)
 
-            pLineV(ctx, line[0], GameObject.gTCanPos(this.target.position), `#ffaa0022`);
+            pLineV(ctx, line[0], GameObject.gTCanPos(this.target.position), this.lineColor);
             //pTextBasic(ctx, line[0].x, line[0].y - 4, `V:${Math.round(vecToDist(this.velocity))}`, `#ffaa00`);
         }
         //pLineV(ctx, line[0], addVec2(line[0], rotateVec2({x: 0, y: 10}, this.rotation)), `#ffffffaa`);
@@ -281,4 +301,22 @@ class Missile extends GameObject {
 
 }
 
-export default Missile;
+
+export class MissileMissile extends Missile {
+    public color: string = "#ff00ff";
+    public lineColor: string = "#ff00ff44";
+    public hitDistance: number = 2000; 
+    public thrustForce: number = 800;
+    public fuel: number = 20000;
+    public guideFuel: number = 20000;
+    public lifeTime: number = 20000;
+    public maxAngle: number = Math.PI * 2;
+    public turnForce: number = 32;
+    public doLead: boolean = false;
+    hit(enemy: AntiAir): void {
+        this.lostTarget = true;
+        const angle = angleBetVecs(enemy.position, this.position) + Math.PI / 2;
+        new Missile(this.position, {x: 0, y: 0}, angle, 'AntiAir', 1000);
+        this.die();
+    }
+}
