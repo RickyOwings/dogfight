@@ -4,7 +4,7 @@ import Spark from "./Sparks.js";
 import {scaleVec2, addVec2, rotateVec2, subVec2, angleBetVecs, distBetVecs, vecToDist} from "../Utility/Vec2.js";
 import {pLineV} from "../Utility/pixelRendering.js";
 const _Missile = class extends GameObject {
-  constructor(pos, vel, angle, owner, launchVel = 300) {
+  constructor(pos, vel, angle, owner, launchVel = 400) {
     super();
     this.color = "#ffaa00";
     this.lineColor = "#ffaa0044";
@@ -21,11 +21,11 @@ const _Missile = class extends GameObject {
     this.leadStore = {x: 0, y: 0};
     this.rotationTarget = 0;
     this.lostTarget = false;
-    this.maxAngle = Math.PI / 3;
+    this.maxAngle = Math.PI / 2;
     this.doLead = true;
     this.ROFlame = 10;
     this.flameTimer = this.ROFlame;
-    this.turnForce = 32;
+    this.turnForce = 128;
     this.hitDistance = 10;
     this.position = pos;
     this.rotation = angle;
@@ -168,7 +168,7 @@ const _Missile = class extends GameObject {
       return;
     const deltaTarget = this.rotationTarget - this.rotation;
     const dir = deltaTarget < 0 ? -1 : 1;
-    const turnFalloff = 32;
+    const turnFalloff = 128;
     const turn = turnFalloff * deltaTarget ** 2 * dir / (turnFalloff * deltaTarget ** 2 + 1);
     const optimalTurnSpeed = 300;
     const vel = vecToDist(this.velocity);
@@ -225,7 +225,7 @@ export class MissileMissile extends Missile {
     this.guideFuel = 2e4;
     this.lifeTime = 2e4;
     this.maxAngle = Math.PI * 2;
-    this.turnForce = 32;
+    this.turnForce = 128;
     this.doLead = false;
   }
   hit(enemy) {
