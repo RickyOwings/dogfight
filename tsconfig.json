@@ -2,9 +2,10 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "module": "ES2016",
-    "target": "ES2016",
-    "allowJs": true
+    "module": "es2022",
+    "target": "es2022",
+    "allowJs": true,
+    "checkJs": true,
   },
   "include": [
       "src"

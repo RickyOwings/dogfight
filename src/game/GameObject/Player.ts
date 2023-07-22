@@ -340,7 +340,7 @@ class Player extends GameObject {
         pTextBasic(ctx, 0, 12, `VEL: ${Math.floor(vecToDist(this.velocity))}`, '#0000ff')
         pTextBasic(ctx, 0, 18, `POS: X:${Math.floor(this.position.x)} Y:${Math.floor(this.position.y)}`, '#ff0000')
         pTextBasic(ctx, 0, 24, `TURN: ${Math.floor(this.turnFacStore * 100) / 100}`, '#ff00ff')*/
-        pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')
+        pTextBasic(ctx, 0, 0, `FPS: ${Math.floor(1000 / this.progressStore)}`, '#00ff00')
 
         const posOnCan = GameObject.gTCanPos(this.position);
         const offset = GameObject.cameraZoom * 32 + 4

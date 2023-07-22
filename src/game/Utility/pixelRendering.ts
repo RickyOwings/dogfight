@@ -186,7 +186,6 @@ export function pPolyFillStip(
     }
 }
 
-
 export function insidePoly(point: Vec2, poly: Vec2[]): boolean{
     const lines: Line[] = [];
     for(let i = 0; i < poly.length; i++){

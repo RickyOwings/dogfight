@@ -39,7 +39,6 @@ interface Target {
 export class BaseAntiAir extends GameObject {
     public color: string;
     public rangeColor: string;
-    public position: Vec2;
     public health: number;
     public damaged: boolean = false;
     public shape: Vec2[];

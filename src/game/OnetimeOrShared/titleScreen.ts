@@ -26,18 +26,19 @@ export default async (ctx: OffscreenCanvasRenderingContext2D | null, resizeFunct
         await wait(waitInterval);
         // --------------------------------------------------------------------------------------------------------------
         clearCanvas(ctx);
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2, "---CONTROLS---", "#ffffff")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 6, "MOVE: W A S D", "#ffffff")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 12, "SHOOT: J", "#ff0000")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 18, "AIRBRAKE: K", "#ff00ff")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 24, "ZOOM: + - 0 (THATS ZERO)", "#0000ff")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 30, "FLARES: SPACEBAR", "#ffff00")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 - 12, "---CONTROLS---", "#ffffff")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 - 6, "MOVE: W A S D", "#ffffff")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2, "SHOOT: J", "#ff0000")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 6, "AIRBRAKE: K", "#ff00ff")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 12, "ZOOM: + - 0 (THATS ZERO)", "#0000ff")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 18, "FLARES: SPACEBAR", "#ffff00")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 24, "CENTER CAMERA: U", "#ffaa00")
         await awaitUserInput();
         menuSound.play();
         await wait(waitInterval);
         // --------------------------------------------------------------------------------------------------------------
         clearCanvas(ctx);
-        pTextBasic(ctx, resolution.width / 2 - 75, resolution.height / 2, "VOLUME IN UPPER RIGHT CORNER", "#ffffff")
+        pTextBasic(ctx, resolution.width / 2 - 60, resolution.height / 2, "VOLUME IN UPPER RIGHT CORNER", "#ffffff")
         await awaitUserInput();
         menuSound.play();
         await wait(waitInterval);
