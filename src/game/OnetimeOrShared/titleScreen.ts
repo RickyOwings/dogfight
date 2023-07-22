@@ -32,7 +32,7 @@ export default async (ctx: OffscreenCanvasRenderingContext2D | null, resizeFunct
         pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 6, "AIRBRAKE: K", "#ff00ff")
         pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 12, "ZOOM: + - 0 (THATS ZERO)", "#0000ff")
         pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 18, "FLARES: SPACEBAR", "#ffff00")
-        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 24, "CENTER CAMERA: U", "#ffaa00")
+        pTextBasic(ctx, resolution.width / 2 - 50, resolution.height / 2 + 24, "CENTER CAMERA: I", "#ffaa00")
         await awaitUserInput();
         menuSound.play();
         await wait(waitInterval);
