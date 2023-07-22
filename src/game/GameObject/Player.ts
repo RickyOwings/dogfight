@@ -2,16 +2,17 @@ import Bullet from './Bullet';
 import GameObject from './GameObject';
 import Input from '../Utility/input';
 import { pLineV, pPoly, pPolyFill, pPolyFillStip, pTextBasic } from '../Utility/pixelRendering';
-import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2 } from '../Utility/Vec2';
+import { Vec2, polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist, subVec2, distBetVecs } from '../Utility/Vec2';
 import GameAudio from '../Utility/GameAudio';
 import Explosion from './Explosion';
 import Flare from './Flare';
+import resolution from '../OnetimeOrShared/resolution';
 
 
 
 class Player extends GameObject {
 
-    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k', ' ', 'u']);
+    static input: Input = new Input(['w', 'a', 's', 'd', '-', '=', '0', 'j', 'k', ' ', 'i']);
 
     static shootSound: GameAudio = new GameAudio('./assets/sounds/shoot.ogg');
     static moveSound: GameAudio = new GameAudio('./assets/sounds/move.ogg');
@@ -29,7 +30,6 @@ class Player extends GameObject {
 
     static color: string = "#00ff00";
 
-    public position: Vec2;
     public velocity: Vec2 = { x: 0, y: 300 };
     public acceleration: Vec2 = { x: 0, y: 0 };
 
@@ -83,11 +83,22 @@ class Player extends GameObject {
               (1 - (7 * (vecToDist(this.velocity) / 7500 ))) * Player.zoomState
         )
 
-        const zoomFactor = (Player.input.isPressed('u')) ? 0 : 0.25 / GameObject.cameraZoom;
+        if (Player.input.isPressed('i')) GameObject.setCameraZoom(0.4);
+        const zoomFactor = (Player.input.isPressed('i')) ? 1 : 0;
 
-        const cameraPos: Vec2 = addVec2(
+        const padding = 0.4;
+        const bulletVel = addVec2(this.velocity, rotateVec2({x: 0, y: Bullet.lauchVel}, this.rotation))
+        let bulletVelMag = scaleVec2(bulletVel, 4000 / vecToDist(bulletVel));
+        if (bulletVelMag.x > resolution.width * padding / GameObject.cameraZoom) bulletVelMag.x = resolution.width * padding / GameObject.cameraZoom
+        if (bulletVelMag.x < resolution.width * -padding / GameObject.cameraZoom) bulletVelMag.x = resolution.width * -padding / GameObject.cameraZoom
+        if (bulletVelMag.y > resolution.height * padding / GameObject.cameraZoom) bulletVelMag.y = resolution.height * padding / GameObject.cameraZoom
+        if (bulletVelMag.y < resolution.height * -padding / GameObject.cameraZoom) bulletVelMag.y = resolution.height * -padding / GameObject.cameraZoom
+
+
+
+        let cameraPos: Vec2 = addVec2(
             this.position,
-            scaleVec2(this.velocity, zoomFactor)
+            scaleVec2(bulletVelMag, zoomFactor)
         );
 
         GameObject.setCameraPosition(cameraPos.x, cameraPos.y)
@@ -101,7 +112,7 @@ class Player extends GameObject {
         this.health-=amount;
         Player.damageSound.play();
         Player.damageSound.setPlaybackRate(this.health / 100);
-        if (this.health < 0) this.die();
+        if (this.health <= 0) this.die();
     }
 
 
@@ -155,14 +166,14 @@ class Player extends GameObject {
         const a = (Player.input.isPressed('a')) ? 1 : 0;
         const d = (Player.input.isPressed('d')) ? 1 : 0;
 
-        const optimalTurnSpeed = 75;
+        const optimalTurnSpeed = 300;
         const vel = vecToDist(this.velocity);
-        const falloff = 4 / (250000 * (vel / 2000))
+        const falloff = 1 / (250000 * (vel / 2000))
         const speedMult = 1 / (falloff * (vel - optimalTurnSpeed) ** 2 + 1)
 
         this.turnFacStore = speedMult;
 
-        const turnFactor = (d - a) * 8;
+        const turnFactor = (d - a) * 4;
         this.rotAcceleration += turnFactor * speedMult;
     }
 
@@ -175,7 +186,7 @@ class Player extends GameObject {
     private liftStore = 0;
 
     lift() {
-        const liftForce: number = rotateVec2(this.velocity, -this.rotation).x * 4
+        const liftForce: number = rotateVec2(this.velocity, -this.rotation).x * 1
 
         Player.windSound.setVolume(Math.abs(liftForce) / 200);
 
@@ -248,7 +259,7 @@ class Player extends GameObject {
         }
     }
 
-    private static FlareROF = 500;
+    private static FlareROF = 100;
     private flareFireTimer = Player.FlareROF;
     private static initalFlareCount: number = 15;
     private flares: number = Player.initalFlareCount;
@@ -320,19 +331,14 @@ class Player extends GameObject {
         const progradeToCanvas = GameObject.gTCanPosPoly(prograde);
         pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0011");
 
-        const aim = [
-            this.position,
-            addVec2(
-                this.position,
-                rotateVec2(
-                    { x: 0, y: 2000 },
-                    this.rotation
-                )
-            )
-        ];
+        const aimDist: number = 4000;
 
-        const aimToCanvas = GameObject.gTCanPosPoly(aim);
-        pLineV(ctx, aimToCanvas[0], aimToCanvas[1], "#ffffff44")
+            const bulletVel = rotateVec2({x: 0, y: Bullet.lauchVel}, this.rotation);
+            const netVel = addVec2(this.velocity, bulletVel);
+            const aimTime = aimDist / vecToDist(netVel)
+            const aimOffset = addVec2(this.position, scaleVec2(netVel, aimTime));
+
+        pLineV(ctx, GameObject.gTCanPos(this.position), GameObject.gTCanPos(aimOffset), "#ffffff44")
 
         // textElements
         /*pTextBasic(ctx, 0, 0, `PLAYER STATS`, '#ffffff')

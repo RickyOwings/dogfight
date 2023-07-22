@@ -53,6 +53,7 @@ export class BaseAntiAir extends GameObject {
     public fireFunction: (position: Vec2, angle: number) => void;
     public targetIdentifier: string;
     public projectileVelocity: number;
+    public playerInRange: boolean = false;
 
     // function which damages self by amount
     public damage(amount: number) {
@@ -145,7 +146,9 @@ export class BaseAntiAir extends GameObject {
             const targets = GameObject.searchByIdentifier(this.targetIdentifier) as Target[];
             for (let i = 0; i < targets.length; i++) {
                 const worked: boolean = this.tryFire(targets[i]);
-                if (worked) return;
+                if (worked) {
+                    return;
+                }
             }
         }
     }
@@ -153,10 +156,14 @@ export class BaseAntiAir extends GameObject {
     public targetPosStore: Vec2;
     tryFire(target: Target): boolean {
         const distance = distBetVecs(target.position, this.position);
-        if (distance > this.range) return false;
+        if (distance > this.range) {
+            this.playerInRange = false;
+            return false;
+        }
         this.targetPosStore = target.position;
         const lead = this.obtainLead(target, distance);
         this.fireProjectile(lead);
+        this.playerInRange = true;
         return true;
     }
 
@@ -167,10 +174,10 @@ export class BaseAntiAir extends GameObject {
             target.position,
             scaleVec2(target.velocity, timeS)
         );
-        leadPos = addVec2(
+        /*leadPos = addVec2(
             leadPos,
             scaleVec2(target.accelerationStore, timeS ** 2 / 2)
-        )
+        )*/
         this.leadStore = leadPos;
         return angleBetVecs(this.position, leadPos);
     }
@@ -266,7 +273,7 @@ export class AntiAir extends BaseAntiAir {
     }
     draw(ctx: OffscreenCanvasRenderingContext2D) {
         super.draw(ctx);
-        if (this.leadStore && this.targetPosStore && !this.resting) {
+        if (this.leadStore && this.targetPosStore && !this.resting && this.playerInRange) {
             pLineV(ctx, GameObject.gTCanPos(this.position), GameObject.gTCanPos(this.leadStore), this.rangeColor);
             pLineCircle(ctx, 2, GameObject.gTCanPos(this.leadStore), this.rangeColor, 4);
         }

@@ -28,7 +28,7 @@ export class Missile extends GameObject {
     private audio: GameAudio;
     private justSpawned: boolean = true;
 
-    constructor(pos: Vec2, vel: Vec2, angle: number, owner: string, launchVel: number = 300) {
+    constructor(pos: Vec2, vel: Vec2, angle: number, owner: string, launchVel: number = 400) {
         super();
         this.position = pos;
         this.rotation = angle;
@@ -85,7 +85,7 @@ export class Missile extends GameObject {
 
     private rotationTarget: number = 0;
     public lostTarget: boolean = false;
-    public maxAngle: number = Math.PI / 3;
+    public maxAngle: number = Math.PI / 2;
 
     flare(progress: number) {
         const flares = GameObject.searchByIdentifier('Flare') as Flare[];
@@ -214,14 +214,14 @@ export class Missile extends GameObject {
     }
 
 
-    public turnForce: number = 32;
+    public turnForce: number = 128;
 
 
     turn() {
         if (this.lostTarget) return;
         const deltaTarget = this.rotationTarget - this.rotation;
         const dir = (deltaTarget < 0) ? -1 : 1;
-        const turnFalloff = 32;
+        const turnFalloff = 128;
         const turn = turnFalloff * deltaTarget ** 2 * dir / (turnFalloff * deltaTarget ** 2 + 1);
 
         const optimalTurnSpeed = 300;
@@ -311,7 +311,7 @@ export class MissileMissile extends Missile {
     public guideFuel: number = 20000;
     public lifeTime: number = 20000;
     public maxAngle: number = Math.PI * 2;
-    public turnForce: number = 32;
+    public turnForce: number = 128;
     public doLead: boolean = false;
     hit(enemy: AntiAir): void {
         this.lostTarget = true;

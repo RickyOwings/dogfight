@@ -71,7 +71,7 @@ export default async (ctx: OffscreenCanvasRenderingContext2D | null, resizeFunct
         fill();
         await wait(dur);
         resolve(0);
-        resolution.scaleFactor = 3;
+        resolution.scaleFactor = 5;
         resizeFunction();
     })
 }
