@@ -6,6 +6,7 @@ import {polyOffset, polyRotate, addVec2, scaleVec2, rotateVec2, vecToDist} from 
 import GameAudio from "../Utility/GameAudio.js";
 import Explosion from "./Explosion.js";
 import Flare from "./Flare.js";
+import resolution from "../OnetimeOrShared/resolution.js";
 const _Player = class extends GameObject {
   constructor(x, y) {
     super();
@@ -63,15 +64,28 @@ const _Player = class extends GameObject {
     if (reset)
       _Player.zoomState = 0.25;
     GameObject.setCameraZoom((1 - 7 * (vecToDist(this.velocity) / 7500)) * _Player.zoomState);
-    const zoomFactor = _Player.input.isPressed("u") ? 0 : 0.25 / GameObject.cameraZoom;
-    const cameraPos = addVec2(this.position, scaleVec2(this.velocity, zoomFactor));
+    if (_Player.input.isPressed("i"))
+      GameObject.setCameraZoom(0.4);
+    const zoomFactor = _Player.input.isPressed("i") ? 1 : 0;
+    const padding = 0.4;
+    const bulletVel = addVec2(this.velocity, rotateVec2({x: 0, y: Bullet.lauchVel}, this.rotation));
+    let bulletVelMag = scaleVec2(bulletVel, 4e3 / vecToDist(bulletVel));
+    if (bulletVelMag.x > resolution.width * padding / GameObject.cameraZoom)
+      bulletVelMag.x = resolution.width * padding / GameObject.cameraZoom;
+    if (bulletVelMag.x < resolution.width * -padding / GameObject.cameraZoom)
+      bulletVelMag.x = resolution.width * -padding / GameObject.cameraZoom;
+    if (bulletVelMag.y > resolution.height * padding / GameObject.cameraZoom)
+      bulletVelMag.y = resolution.height * padding / GameObject.cameraZoom;
+    if (bulletVelMag.y < resolution.height * -padding / GameObject.cameraZoom)
+      bulletVelMag.y = resolution.height * -padding / GameObject.cameraZoom;
+    let cameraPos = addVec2(this.position, scaleVec2(bulletVelMag, zoomFactor));
     GameObject.setCameraPosition(cameraPos.x, cameraPos.y);
   }
   damage(amount) {
     this.health -= amount;
     _Player.damageSound.play();
     _Player.damageSound.setPlaybackRate(this.health / 100);
-    if (this.health < 0)
+    if (this.health <= 0)
       this.die();
   }
   die() {
@@ -114,19 +128,19 @@ const _Player = class extends GameObject {
   turn() {
     const a = _Player.input.isPressed("a") ? 1 : 0;
     const d = _Player.input.isPressed("d") ? 1 : 0;
-    const optimalTurnSpeed = 75;
+    const optimalTurnSpeed = 300;
     const vel = vecToDist(this.velocity);
-    const falloff = 4 / (25e4 * (vel / 2e3));
+    const falloff = 1 / (25e4 * (vel / 2e3));
     const speedMult = 1 / (falloff * (vel - optimalTurnSpeed) ** 2 + 1);
     this.turnFacStore = speedMult;
-    const turnFactor = (d - a) * 8;
+    const turnFactor = (d - a) * 4;
     this.rotAcceleration += turnFactor * speedMult;
   }
   rotDrag() {
     this.rotAcceleration -= this.rotVelocity * 5;
   }
   lift() {
-    const liftForce = rotateVec2(this.velocity, -this.rotation).x * 4;
+    const liftForce = rotateVec2(this.velocity, -this.rotation).x * 1;
     _Player.windSound.setVolume(Math.abs(liftForce) / 200);
     this.liftStore = liftForce;
     const liftVector = {x: -liftForce, y: 0};
@@ -199,13 +213,13 @@ const _Player = class extends GameObject {
     ];
     const progradeToCanvas = GameObject.gTCanPosPoly(prograde);
     pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0011");
-    const aim = [
-      this.position,
-      addVec2(this.position, rotateVec2({x: 0, y: 2e3}, this.rotation))
-    ];
-    const aimToCanvas = GameObject.gTCanPosPoly(aim);
-    pLineV(ctx, aimToCanvas[0], aimToCanvas[1], "#ffffff11");
-    pTextBasic(ctx, 0, 30, `FPS: ${Math.floor(1e3 / this.progressStore)}`, "#00ff00");
+    const aimDist = 4e3;
+    const bulletVel = rotateVec2({x: 0, y: Bullet.lauchVel}, this.rotation);
+    const netVel = addVec2(this.velocity, bulletVel);
+    const aimTime = aimDist / vecToDist(netVel);
+    const aimOffset = addVec2(this.position, scaleVec2(netVel, aimTime));
+    pLineV(ctx, GameObject.gTCanPos(this.position), GameObject.gTCanPos(aimOffset), "#ffffff44");
+    pTextBasic(ctx, 0, 0, `FPS: ${Math.floor(1e3 / this.progressStore)}`, "#00ff00");
     const posOnCan = GameObject.gTCanPos(this.position);
     const offset = GameObject.cameraZoom * 32 + 4;
     pTextBasic(ctx, posOnCan.x - 5, posOnCan.y - offset, `HP: ${this.health}`, "#00ff00");
@@ -214,7 +228,7 @@ const _Player = class extends GameObject {
   }
 };
 let Player = _Player;
-Player.input = new Input(["w", "a", "s", "d", "-", "=", "0", "j", "k", " ", "u"]);
+Player.input = new Input(["w", "a", "s", "d", "-", "=", "0", "j", "k", " ", "i"]);
 Player.shootSound = new GameAudio("./assets/sounds/shoot.ogg");
 Player.moveSound = new GameAudio("./assets/sounds/move.ogg");
 Player.airbrakeSound = new GameAudio("./assets/sounds/airbrake.ogg");
@@ -225,6 +239,6 @@ Player.outOfFlares = new GameAudio("./assets/sounds/outOfFlares.ogg");
 Player.color = "#00ff00";
 Player.zoomState = 0.1;
 Player.ROF = 30;
-Player.FlareROF = 500;
+Player.FlareROF = 100;
 Player.initalFlareCount = 15;
 export default Player;

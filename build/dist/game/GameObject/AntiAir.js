@@ -35,6 +35,7 @@ export class BaseAntiAir extends GameObject {
     super();
     this.damaged = false;
     this.resting = false;
+    this.playerInRange = false;
     this.position = position;
     this.identifier = identifier;
     this.color = color;
@@ -95,24 +96,27 @@ export class BaseAntiAir extends GameObject {
       const targets = GameObject.searchByIdentifier(this.targetIdentifier);
       for (let i = 0; i < targets.length; i++) {
         const worked = this.tryFire(targets[i]);
-        if (worked)
+        if (worked) {
           return;
+        }
       }
     }
   }
   tryFire(target) {
     const distance = distBetVecs(target.position, this.position);
-    if (distance > this.range)
+    if (distance > this.range) {
+      this.playerInRange = false;
       return false;
+    }
     this.targetPosStore = target.position;
     const lead = this.obtainLead(target, distance);
     this.fireProjectile(lead);
+    this.playerInRange = true;
     return true;
   }
   obtainLead(target, distance) {
     const timeS = distance / this.projectileVelocity;
     let leadPos = addVec2(target.position, scaleVec2(target.velocity, timeS));
-    leadPos = addVec2(leadPos, scaleVec2(target.accelerationStore, timeS ** 2 / 2));
     this.leadStore = leadPos;
     return angleBetVecs(this.position, leadPos);
   }
@@ -188,7 +192,7 @@ const _AntiAir = class extends BaseAntiAir {
   }
   draw(ctx) {
     super.draw(ctx);
-    if (this.leadStore && this.targetPosStore && !this.resting) {
+    if (this.leadStore && this.targetPosStore && !this.resting && this.playerInRange) {
       pLineV(ctx, GameObject.gTCanPos(this.position), GameObject.gTCanPos(this.leadStore), this.rangeColor);
       pLineCircle(ctx, 2, GameObject.gTCanPos(this.leadStore), this.rangeColor, 4);
     }

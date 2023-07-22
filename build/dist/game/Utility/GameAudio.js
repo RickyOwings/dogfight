@@ -1,6 +1,12 @@
 import awaitPageLoad from "./awaitPageLoad.js";
 async function init() {
+  const response = await fetch("./assets/sounds/sounds.json");
+  const sounds = await response.json();
   await awaitPageLoad();
+  sounds.forEach(async (sound) => {
+    await fetch(`./assets/sounds/${sound}`);
+    console.log(`Fetched ${sound}`);
+  });
   const volumeSlider = document.getElementById("volume");
   document.addEventListener("input", () => {
     GameAudio.volume = parseFloat(volumeSlider.value);

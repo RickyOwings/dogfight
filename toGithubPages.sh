@@ -1,2 +1,2 @@
-git subtree add --prefix=build/ origin gh-pages
+npx snowpack build
 git subtree push --prefix build origin gh-pages
