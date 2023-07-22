@@ -138,7 +138,9 @@ class Player extends GameObject {
     thrust() {
         const w = (Player.input.isPressed('w')) ? 1 : 0;
         const s = (Player.input.isPressed('s')) ? 1 : 0;
-        const factor = 12.5 * (w - s) + 25;
+        const maxThrust = 50;
+
+        const factor = (maxThrust / 3) * (w - s) + (maxThrust * 2 / 3);
 
         const force: Vec2 = { x: 0, y: factor };
         const forceRot = rotateVec2(force, this.rotation);
@@ -312,24 +314,24 @@ class Player extends GameObject {
             addVec2(
                 this.position,
                 rotateVec2(
-                    { x: -this.liftStore * 0.1, y: 0 },
+                    { x: -this.liftStore * 4, y: 0 },
                     this.rotation
                 )
             )
         ];
         const liftToCanvas = GameObject.gTCanPosPoly(lift);
-        pLineV(ctx, liftToCanvas[0], liftToCanvas[1], "#00ffff11");
+        pLineV(ctx, liftToCanvas[0], liftToCanvas[1], "#00ffff44");
 
         const prograde = [
             this.position,
             addVec2(
                 this.position,
-                scaleVec2(this.velocity, 0.2)
+                scaleVec2(this.velocity, 4)
             )
         ];
 
         const progradeToCanvas = GameObject.gTCanPosPoly(prograde);
-        pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0011");
+        pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0044");
 
         const aimDist: number = 4000;
 

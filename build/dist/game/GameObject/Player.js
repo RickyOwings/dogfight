@@ -111,7 +111,8 @@ const _Player = class extends GameObject {
   thrust() {
     const w = _Player.input.isPressed("w") ? 1 : 0;
     const s = _Player.input.isPressed("s") ? 1 : 0;
-    const factor = 12.5 * (w - s) + 25;
+    const maxThrust = 50;
+    const factor = maxThrust / 3 * (w - s) + maxThrust * 2 / 3;
     const force = {x: 0, y: factor};
     const forceRot = rotateVec2(force, this.rotation);
     this.acceleration = addVec2(this.acceleration, forceRot);
@@ -203,16 +204,16 @@ const _Player = class extends GameObject {
     pPoly(ctx, toCanvas, _Player.color);
     const lift = [
       this.position,
-      addVec2(this.position, rotateVec2({x: -this.liftStore * 0.1, y: 0}, this.rotation))
+      addVec2(this.position, rotateVec2({x: -this.liftStore * 4, y: 0}, this.rotation))
     ];
     const liftToCanvas = GameObject.gTCanPosPoly(lift);
-    pLineV(ctx, liftToCanvas[0], liftToCanvas[1], "#00ffff11");
+    pLineV(ctx, liftToCanvas[0], liftToCanvas[1], "#00ffff44");
     const prograde = [
       this.position,
-      addVec2(this.position, scaleVec2(this.velocity, 0.2))
+      addVec2(this.position, scaleVec2(this.velocity, 4))
     ];
     const progradeToCanvas = GameObject.gTCanPosPoly(prograde);
-    pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0011");
+    pLineV(ctx, progradeToCanvas[0], progradeToCanvas[1], "#ffff0044");
     const aimDist = 4e3;
     const bulletVel = rotateVec2({x: 0, y: Bullet.lauchVel}, this.rotation);
     const netVel = addVec2(this.velocity, bulletVel);
